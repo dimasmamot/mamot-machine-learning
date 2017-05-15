@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- REQUIRED METAS -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- CSS BOOTSTRAP -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+</head>
+<body>
+  <div class="container-fluid w-75">
+    <h3 class="text-center">Naive Bayes Learning<br>
+      <small>Dimas Rizky H.P. - 2110141011 - 3 D4 IT A</small></h3>
+
+      <div class="card"> 
+        <div class="card-header card-inverse card-primary mb-3">
+          Table Data
+        </div>
+        <div class="card-block">
+          <blockquote class="card-blockquote" id="container-tabel">
+
+          </blockquote>
+        </div>
+      </div>
+      <br>
+      <div class="card"> 
+        <div class="card-header card-inverse card-primary mb-3">
+          Table Analisa
+        </div>
+        <div class="card-block">
+          <blockquote class="card-blockquote" id="card-analisa">
+
+          </blockquote>
+        </div>
+      </div>
+      <br>
+
+      <div class="card"> 
+        <div class="card-header card-inverse card-primary mb-3">
+          Test Probabilitas Tunggal
+        </div>
+        <div class="card-block">
+          <blockquote class="card-blockquote" id="testing-card">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon-test-atribut">Jenis Atribut</span><input type="text" id="input-test-atribut" class="form-control" placeholder="Masukan salah satu atribut" aria-describedby="basic-addon-test-atribut">
+            </div>
+            <br>
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon-test-nilai">Nilai Atribut</span><input type="text" id="input-test-nilai" class="form-control" placeholder="Masukan nilai salah satu atribut" aria-describedby="basic-addon-test-nilai">
+            </div>
+            <br>
+            <button type="button" class="btn btn-primary btn-block" id="btnTest">Probabilitas Tunggal</button><br>
+
+            <p id="hasil-probabilitas"></p>
+          </blockquote>
+        </div>
+      </div>
+      <br>
+    </div>
+
+    <!-- FILE JQUERY, TETHER, JS BOOTSTRAP -->
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="js/tether-1.4.0.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+      // console.log("Masuk");
+      var dataTable = [["1","Cerah","Normal","Pelan","Ya"],["2","Cerah","Normal","Pelan","Ya"], ["3","Hujan","Tinggi","Pelan","Tidak"], ["4","Cerah","Normal","Kencang","Ya"], ["5","Hujan","Tinggi","Kencang","Tidak"],["6","Cerah","Normal","Pelan","Ya"]];
+
+      var label = ["#","Cuaca","Temperatur","Kecepatan-Angin","Berolah-raga"];
+
+      var arrayAttribute = [];
+      var arrayClass = [];
+
+
+      for(var i=1; i<label.length-1;i++){
+        arrayAttribute.push(label[i]);
+      }
+
+      var dataWIdentifier = dataTable.slice();
+      dataWIdentifier.unshift(label);
+
+      // console.log(dataWIdentifier);
+      var jumlahClass = getJmlClass();
+
+      $("#container-tabel").append('<table class="table table-responsive table-hover" id="idkolom"></table>');    
+
+      // console.log(label.length);
+      // console.log(dataTable.length);
+
+      for(var i=0;i<=dataTable.length;i++){
+
+        if(i==0){
+          $("#idkolom").append('<thead><tr>');
+        } else {
+          $("#idkolom").append('<tbody><tr>');
+        }
+
+
+        for(var j=0; j< dataTable[0].length;j++){
+
+          if(i==0){
+            $("#idkolom").append('<th>'+label[j]+'</th>');
+          } else {
+            $("#idkolom").append('<td>'+dataTable[i-1][j]+'</td>');
+          }
+        }
+
+        if(i==0){
+          $("#idkolom").append('</tr></thead>');
+        } else{
+          $("#idkolom").append('</tr><tbody>');
+        }
+
+      }
+
+      $('#container-tabel').append('<hr>')
+
+      for(var i=1;i<=label.length-2;i++){
+        $("#container-tabel").append('<div class="input-group"><span class="input-group-addon" id="basic-addon'+i+'"">'+label[i]+'</span><input type="text" id="input-'+label[i]+'" class="form-control" placeholder="'+label[i]+'" aria-describedby="basic-addon'+i+'""></div><br>');
+      }
+
+      $("#container-tabel").append('<button type="button" class="btn btn-primary btn-block" id="btnBayes">Naive Bayes</button><br>');
+
+      function probabilitas(identifier, nilai, classifier){
+
+        var jmlData = dataWIdentifier.length-1;
+        var counter = 0;
+        var hasildata = 0;
+        var posClass = dataWIdentifier[0].length-1;
+        probClassifier = probClass(classifier); //Probabilitas class
+
+        pembatas("FUNGSI PROBABILITAS MULAI");
+        console.log("Identifier =" + identifier);
+        console.log("Nilai =" + nilai);
+        console.log("Classifier =" + classifier);
+
+        var posisiIdentifier = getPosisiAtribut(identifier);
+
+        // console.log("Posisi Identifier : " +posisiIdentifier);
+
+        // pembatas("Selesai sampai posisi identifier");
+        for(var i=1; i<dataWIdentifier.length;i++){
+          if(dataWIdentifier[i][posisiIdentifier].toLowerCase()==nilai.toLowerCase()&&dataWIdentifier[i][posClass].toLowerCase()==classifier.toLowerCase()){
+            counter++;
+          }
+      }
+
+
+      hasildata = counter/getJmlValueClass(classifier);
+      return hasildata;
+    }
+
+    function getJmlValueClass(classifier){
+      var posClass = dataWIdentifier[0].length-1;
+      var counter = 0;
+
+      for(var i=1 ; i<dataWIdentifier.length;i++){
+        if(dataWIdentifier[i][posClass].toLowerCase()==classifier.toLowerCase()){
+          counter++;
+        }
+      }
+
+      return counter;
+    }
+
+    function getPosisiAtribut(identifier){
+      for(var i=0; i<dataWIdentifier[0].length;i++){
+        if(dataWIdentifier[0][i].toLowerCase()==identifier.toLowerCase()){
+          return i;
+        }
+      }
+    }
+
+    function probClass(classifier){
+      var counter = 0;
+      var posisiClass = dataWIdentifier[0].length-1;
+
+      for(var i=1; i<dataWIdentifier.length;i++){
+        if(dataWIdentifier[i][posisiClass].toLowerCase() === classifier.toLowerCase()){
+          counter++;
+        }
+      }
+      var hasilProb = counter/(dataWIdentifier.length-1);
+
+      return hasilProb;
+    }
+
+    function getJmlClass(){
+      posisiClass = dataWIdentifier[0].length-1;
+      var temparr=dataTable.slice();
+      var counter = 0;
+
+      temparr.sort(sortFunction);
+
+      function sortFunction(a,b){
+        if(a[posisiClass] === b[posisiClass]){
+          return 0;
+        } else {
+          return (a[posisiClass] < b[posisiClass]) ? -1 : 1;
+        }
+      }
+      // console.log(temparr);
+
+      arrayClass.push(temparr[0][posisiClass]);
+
+      for(var i = 1 ; i < temparr.length;i++){
+        if(temparr[i][posisiClass]!=temparr[i-1][posisiClass]){
+          arrayClass.push(temparr[i][posisiClass]);
+          counter++;
+        }
+      }
+
+      return counter;
+
+    }
+
+    $("#btnTest").click(function(){
+      var identifier = $('#input-test-atribut').val();
+      var nilai = $('#input-test-nilai').val();
+
+      // console.log("Lenght Array Class");
+      // console.log(arrayClass.length);
+
+      for(var i=0;i<arrayClass.length;i++){
+        // console.log("masuk test")
+        var hasilProb = probabilitas(identifier, nilai, arrayClass[i]);
+        $('#testing-card').append("<p>Probabilitas "+identifier+" = "+nilai+" | "+arrayClass[i]+" = "+hasilProb+"</p>");
+        // console.log("Hasil Probabilitas "+arrayClass[i]+" = "+hasilProb);
+        // console.log("Hasil Probabilitas Class "+arrayClass[i]+" = "+probClass(arrayClass[i]));
+      }
+    });
+
+    $("#btnBayes").click(function(){
+      var jmlAtribut = dataWIdentifier[0].length-2;
+      var arrAtributInput = [];
+      var arrInput = [];
+
+      for(var i=0;i<jmlAtribut;i++){
+        var temp = $("#input-"+arrayAttribute[i]+"").val();
+        if(temp.length>0){
+          arrAtributInput.push(arrayAttribute[i], temp);
+          arrInput.push(arrAtributInput);
+          arrAtributInput = [];
+        }
+      }
+
+      console.log(arrInput);
+      console.log(arrayClass.length);
+      console.log(arrInput.length);
+
+      var arrFaktaPerClass = [];
+      var arrFakta = [];
+      var naiveBayesClassifier = 1;
+
+      var arrHasilPerClass = [];
+      var arrHasil = [];
+
+      var kesimpulan = [];
+
+      $('#card-analisa').append("FAKTA<br><hr>");
+
+      for(var i=0;i<arrayClass.length;i++){
+        console.log("MASUK LAYER 1");
+        for(var j=0;j<arrInput.length;j++){
+          console.log("MASUK LAYER 2")
+          var hasilProb = probabilitas(arrInput[j][0],arrInput[j][1],arrayClass[i]);
+          $('#card-analisa').append("<p>Probabilitas "+arrInput[j][0]+" = "+arrInput[j][1]+" | "+arrayClass[i]+" = "+hasilProb+"</p>");
+          arrFaktaPerClass.push(hasilProb);
+        }
+
+        console.log("JUMLAH arrFaktaPerClass");
+        console.log(arrFaktaPerClass.length);
+        console.log(arrFaktaPerClass);
+        naiveBayesClassifier *= probClass(arrayClass[i]);
+
+        for(var k=0;k<arrFaktaPerClass.length;k++){
+          naiveBayesClassifier *= arrFaktaPerClass[k];
+        }
+        arrFaktaPerClass = [];
+        
+        $('#card-analisa').append("<p>Naive Bayes Classifier "+arrayClass[i]+" = "+naiveBayesClassifier+"</p>");
+        $('#card-analisa').append("<hr>");
+
+        arrHasilPerClass.push(arrayClass[i],naiveBayesClassifier);
+        arrHasil.push(arrHasilPerClass);
+
+        arrHasilPerClass = [];
+        naiveBayesClassifier = 1;
+      }
+
+      arrHasil.sort(sortFunction);
+
+      function sortFunction(a,b){
+        if(a[posisiClass] === b[1]){
+          return 0;
+        } else {
+          return (a[1] > b[1]) ? -1 : 1;
+        }
+      }
+
+      $('#card-analisa').append("<p>Kesimpulan = "+arrHasil[0][0]);
+      
+    });
+
+    function pembatas(stringpembatas){
+      console.log("==============================");
+      console.log("    "+stringpembatas+"    ");
+      console.log("==============================");
+    }
+
+  </script>
+</body>
+</html>

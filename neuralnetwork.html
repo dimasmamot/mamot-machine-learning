@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- REQUIRED METAS -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- CSS BOOTSTRAP -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+</head>
+<body>
+  <div class="container-fluid w-75">
+    <h3 class="text-center">Naive Bayes Learning<br>
+      <small>Dimas Rizky H.P. - 2110141011 - 3 D4 IT A</small>
+    </h3>
+  </div>
+  <div class="card"> 
+    <div class="card-header card-inverse card-primary mb-3">
+      Table Data 
+      <span><button type="button" class="btn btn-warning" id="btnAnd">Dataset AND</button></span>
+      <span><button type="button" class="btn btn-success" id="btnHipertensi">Dataset Hipertensi</button></span>
+    </div>
+    <div class="card-block">
+      <blockquote class="card-blockquote" id="container-tabel">
+
+      </blockquote>
+    </div>
+  </div>
+  <br>
+  <button type="button" class="btn btn-primary btn-block" id="btnNeural">Neural Network</button>
+  <br>
+  <div class="card"> 
+    <div class="card-header card-inverse card-primary mb-3">
+      Table Neural Network
+    </div>
+    <div class="card-block">
+      <blockquote class="card-blockquote" id="card-analisa">
+
+      </blockquote>
+    </div>
+  </div>
+  <br>
+  <div class="card"> 
+        <div class="card-header card-inverse card-primary mb-3">
+          Test Beban
+        </div>
+        <div class="card-block">
+          <blockquote class="card-blockquote" id="testing-card">
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon-test-atribut">Data 1</span><input type="text" id="input-data1" class="form-control" placeholder="Masukan nilai data1" aria-describedby="basic-addon-test-atribut">
+            </div>
+            <br>
+            <div class="input-group">
+              <span class="input-group-addon" id="basic-addon-test-nilai">Data 2</span><input type="text" id="input-data2" class="form-control" placeholder="Masukan nilai data 2" aria-describedby="basic-addon-test-nilai">
+            </div>
+            <br>
+            <button type="button" class="btn btn-primary btn-block" id="btnTest">Klasifikasi</button><br>
+
+            <p id="hasil-klasifikasi"></p>
+          </blockquote>
+        </div>
+      </div>
+      <br>
+  <!-- FILE JQUERY, TETHER, JS BOOTSTRAP -->
+  <script src="js/jquery-3.1.1.min.js"></script>
+  <script src="js/tether-1.4.0.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script>
+    var dataTable = []; //dataset tanpa label
+    var dataWLabel = []; //dataset dengan label
+    var arrayBeban = [];
+
+    var dataSetAND = [[0,0,0],[0,1,0],[1,0,0],[1,1,1]]; //dataset AND value
+    var labelSetAND = ["X1","X2","Y"]; //label dataset AND
+
+    var dataSetHipertensi = [[5,8,0],[5,16,0],[10,8,0],[10,24,1],[15,24,1]]; //value data hipertensi
+    var atributSetHipertensi = [["muda","gemuk","tidak"],["muda","sangat gemuk","tidak"],["paruh baya","gemuk","tidak"],["paruh baya","terlalu gemuk","ya"],["tua","terlalu gemuk","ya"]]; //atribut dataset hipertensi
+    var labelSetHipertensi = ["Umur","Kegemukan","Hipertensi"]; //label dataset hipertensi
+
+    var jenisDataset = "";
+
+    function cetakTable(dataset,labelnya){
+      flushTable(); //menghapus array yang sifatnya temporary
+
+      dataTable = dataset.slice();
+      dataWLabel.unshift(labelnya);
+
+      $("#container-tabel").append('<table class="table table-hover" id="idkolom"></table>');
+
+      for(var i=0;i<=dataTable.length;i++){
+        if(i==0){
+          $("#idkolom").append('<thead><tr id="nomor'+i+'">');
+        } else {
+          $("#idkolom").append('<tbody><tr id="nomor'+i+'">');
+        }
+
+        for(var j=0; j< dataTable[0].length;j++){
+
+          if(i==0){
+            $("#nomor"+i+"").append('<th>'+labelnya[j]+'</th>');
+          } else {
+            $("#nomor"+i+"").append('<td>'+dataTable[i-1][j]+'</td>');
+          }
+        }
+
+        if(i==0){
+          $("#idkolom").append('</tr></thead>');
+        } else{
+          $("#idkolom").append('</tr></tbody>');
+        }
+      }
+
+      $('#container-tabel').append('<hr>')
+
+      // $("#container-tabel").append('<button type="button" class="btn btn-primary btn-block" id="btnNeural">Neural Network</button><br>');
+    }
+
+    $("#btnTest").click(function(){
+      var data1 = $('#input-data1').val();
+      var data2 = $('#input-data2').val();
+
+      console.log("Data 1 : "+data1);
+      console.log("Data 2 : "+data2);
+
+      if(data1=="muda"){
+        data1 = 5;
+      } else if(data1=="paruh baya"){
+        data1 = 10;
+      } else if(data1=="tua"){
+        data1 = 15;
+      }
+
+      if(data2=="gemuk"){
+        data2 = 8;
+      } else if(data2=="sangat gemuk"){
+        data2 = 16;
+      } else if(data2=="terlalu gemuk"){
+        data2 = 24;
+      }
+
+      $('#hasil-klasifikasi').html("");
+
+      var hasil = (data1*arrayBeban[0]) + (data2*arrayBeban[1]) + (1*arrayBeban[2]);
+
+      if(hasil > 0){
+        $('#hasil-klasifikasi').append("Jumlah Klasifikasi Hipertensi : "+hasil+"<br>");
+        $('#hasil-klasifikasi').append("Hasil Klasifikasi Hipertensi : Ya");
+      } else{
+        $('#hasil-klasifikasi').append("Jumlah Klasifikasi Hipertensi : "+hasil+"<br>");
+        $('#hasil-klasifikasi').append("Hasil Klasifikasi Hipertensi : Tidak");
+      }
+    });
+
+    $("#btnAnd").click(function(){
+      cetakTable(dataSetAND, labelSetAND);
+      jenisDataset = "datasetAND";
+    });
+
+    $("#btnHipertensi").click(function(){
+      cetakTable(atributSetHipertensi, labelSetHipertensi);
+      jenisDataset = "dataSetHipertensi";
+      dataTable = [];
+      dataWLabel = [];
+      dataTable = dataSetHipertensi.slice();
+      dataWLabel.unshift(labelSetAND);
+    });
+
+    $("#btnNeural").click(function(){
+
+      console.log(dataTable);
+
+      var jmlKarakter = (dataTable[0].length)-1;
+      var learningRate = 0.5;
+      var batasIterasi = 500;
+      var iBias = 1;
+      var threshold = 0;
+      var arrSum = [];
+      var hasilSum = 0;
+      var output;
+      var posisiTarget = (dataTable[0].length) - 1;
+      var flagError;
+      var iterasiEpoch = 0;
+      var flagEpochSelesai = 0;
+      var iterasiTerakhiir = 9999;
+
+      randomW(jmlKarakter+1);
+
+      // $("#card-analisa").append('<table class="table table-hover" id="idkolomAnalisa"></table>');
+
+      // console.log("Length Data tabel : "+dataTable.length);
+      // console.log("update");
+      // console.log(jmlKarakter);
+      console.log("Beban awal adalah : ");
+      console.log(arrayBeban);
+
+      do{
+        console.log(" ");
+        console.log("ITERASI EPOCH KE -"+(iterasiEpoch+1));
+        console.log("===============================");
+        $("#card-analisa").append('<h1 class="text-center">EPOCH '+(iterasiEpoch+1)+'</h1>')
+        $("#card-analisa").append('<table class="table table-hover" id="idkolomAnalisa'+iterasiEpoch+'"></table>');
+        for(var i = 0; i<=dataTable.length;i++){
+          if(i==0){
+            $("#idkolomAnalisa"+iterasiEpoch+"").append('<thead><tr id="nomorAnalisa'+i+iterasiEpoch+'">');
+          } else {
+            $("#idkolomAnalisa"+iterasiEpoch+"").append('<tbody><tr id="nomorAnalisa'+i+iterasiEpoch+'">');
+          }
+
+          for(var j=0; j<jmlKarakter+3;j++){ //3 berarti 1 untuk bias, 1 untuk summation dan 1 untuk output
+            if(i==0 && j<=jmlKarakter){
+              $("#nomorAnalisa"+i+iterasiEpoch+"").append('<th>I'+(j+1)+'</th>');
+            } else if(i==0 && j==(jmlKarakter+1)){
+              $("#nomorAnalisa"+i+iterasiEpoch+"").append('<th>summation</th>');
+            } else if(i==0 && j==(jmlKarakter+2)){
+              $("#nomorAnalisa"+i+iterasiEpoch+"").append('<th>output</th>');
+            } else if(i>0){
+              if(j<jmlKarakter){ //jmlKarakter = 2
+                $("#nomorAnalisa"+i+iterasiEpoch+"").append('<td>'+dataTable[i-1][j]+'</td>');
+              } else if(j == jmlKarakter){
+                $("#nomorAnalisa"+i+iterasiEpoch+"").append('<td>'+iBias+'</td>');
+              } else if(j == (jmlKarakter+1)){
+                $("#nomorAnalisa"+i+iterasiEpoch+"").append('<td id="summation'+i+iterasiEpoch+'"></td>');
+                for(var k=0; k<=jmlKarakter;k++){
+                  if(k!=jmlKarakter){
+                    arrSum.push((dataTable[i-1][k] * arrayBeban[k]));
+                    $("#summation"+i+iterasiEpoch+"").append('( '+dataTable[i-1][k]+' x '+arrayBeban[k]+' ) + ');                  
+                  }
+                  else{
+                    arrSum.push((1 * arrayBeban[k]));
+                    var hasilSum = summation(arrSum);
+                    $("#summation"+i+iterasiEpoch+"").append('( '+1+' x '+ arrayBeban[k]+' ) = '+ hasilSum);
+                  }
+                }
+              } else if(j == (jmlKarakter+2)){
+                if(hasilSum<threshold){
+                  output = 0;
+                  $("#nomorAnalisa"+i+iterasiEpoch+"").append('<td>0</td>');
+                } else {
+                  output = 1;
+                  $("#nomorAnalisa"+i+iterasiEpoch+"").append('<td>1</td>');
+                }
+              }            
+            }
+          }
+          if(i==0){
+            $("#idkolomAnalisa"+iterasiEpoch+"").append('</tr></thead>');
+          } else{
+            $("#idkolomAnalisa"+iterasiEpoch+"").append('</tr></tbody>');
+          }
+
+          if(i>0){
+            flagError = cekErrorOutput(output,dataTable[i-1][posisiTarget]);
+            if(flagError==1){
+              console.log("Target & Output berbeda pada data : "+i);
+              console.log("Maka dari itu, array beban diubah menjadi :");
+              $("#nomorAnalisa"+i+iterasiEpoch+"").addClass("table-danger");
+              updateW(jmlKarakter,learningRate,dataTable[i-1][posisiTarget],output,i);
+              console.log(arrayBeban);
+            } else if(flagError==0 && i==dataTable.length && jenisDataset=="datasetAND"){ 
+              $("#nomorAnalisa"+i+iterasiEpoch+"").addClass("table-success");
+              if(flagEpochSelesai!=2){
+                var flagEpochSelesai = 1;
+              }
+              console.log("EPOCH BISA DISELESAIKAN");
+            }
+            arrSum = [];
+          }
+        }
+
+        if(flagEpochSelesai == 2 && jenisDataset == "datasetAND"){
+          console.log("Iterasi Epoch Berhenti Pada saat Iterasi Ke-"+iterasiEpoch);
+          break;
+        }
+
+        if(flagEpochSelesai == 1){
+          flagEpochSelesai +=1;
+        }
+
+        if(iterasiEpoch==(batasIterasi-1)){
+          console.log("Iterasi Epoch Berhenti Karena Mencapai Batas Epoch");
+        }
+
+        iterasiEpoch++;
+      }while(iterasiEpoch<batasIterasi)
+
+      $("#card-analisa").append('<h1 class="text-center">HasilBeban</h1>');
+      $("#card-analisa").append('<p class="text-center penampungHasil"></p>');
+      for(var i = 0; i<=jmlKarakter;i++){
+        $(".penampungHasil").append('W'+(i+1)+' = '+arrayBeban[i]+' <br>');
+      }
+    });
+
+    function updateW(jmlKarakter,learningRate,target,output,i){
+      arrayBebanLama = arrayBeban.slice();
+      arrayBeban = [];
+      err = target - output;
+      for(var x = 0;x<=jmlKarakter;x++){
+        if(x!=jmlKarakter){
+          var wBaru = arrayBebanLama[x] + learningRate * dataTable[i-1][x] * err;
+          arrayBeban.push(wBaru);
+        } else {
+          var wBaru = arrayBebanLama[x] + learningRate * 1 * err;
+          arrayBeban.push(wBaru);
+        }
+      }
+    }
+
+    function cekErrorOutput(output,target){
+      var flag=0; //0 berarti sudah benar, lanjutkan
+      
+      if(output-target !=0)
+        flag = 1; //1 berarti masih salah, ulangi
+      else
+        flag = 0;
+      
+      return flag;
+    }
+
+    function summation(arraySum){
+      var tempHasil=0;
+      for(var i=0; i<arraySum.length;i++){
+        tempHasil += arraySum[i];
+      }
+      return tempHasil;
+    }
+
+    function randomW(jml){
+      arrayBeban = [];
+      for(var i =0;i<=jml;i++){
+        var nilairandom = getRandomWeight(-1,1);
+        arrayBeban.push(nilairandom);
+      }
+    }
+
+    function getRandomWeight(min,max){
+      return Math.random() * (max-min) + min;
+    }
+
+    function flushTable(){
+      dataTable = [];
+      dataWLabel = [];
+      $("#container-tabel").html('');
+    }
+
+  </script>
+</body>
+</html>

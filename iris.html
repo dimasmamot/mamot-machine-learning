@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- REQUIRED METAS -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<!-- CSS BOOTSTRAP -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/custom.css">
+
+	<!-- TITLE -->
+	<title>Iris Nearest Neighbor</title>
+</head>
+<body>
+	<div class="container-fluid w-90">
+		<h1 class="text-center">Algoritma Nearest Neighbor dengan Data Iris</h1>
+		<h6 class="text-center">Dimas Rizky H.P. - 2110141011 - 3 D4 IT A</h6>
+		<br>
+
+		<h3 class="text-center">Menggunakan Algoritma Nearest Neighbor</h3>
+		<br>
+		<div class="card card-outline-primary mb-3">
+			<div class="card-header card-inverse card-primary mb-3 text-center">
+				<h4>Master Data Training</h4>
+			</div>
+			<div class="card-block" style="overflow-x: auto;height: 35rem;">
+				<ul class="nav nav-tabs" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link active" data-toggle="tab" href="#tblLengkap" role="tab">Data Ruspini Lengkap</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-toggle="tab" href="#tblDataTraining" role="tab">Data Training</a>
+					</li>
+				</ul>
+
+				<div class="tab-content">
+					<div class="tab-pane show active" id="tblLengkap" role="tabpanel"></div>
+					<div class="tab-pane fade" id="tblDataTraining" role="tabpanel">
+						<table class="table table-hover table-striped table-bordered h-50" id="tabelDT">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>V</th>
+									<th>W</th>
+									<th>X</th>
+									<th>Y</th>
+									<th>CLASS</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>				
+			</div>
+		</div>
+		<br>
+		<div class="card card-outline-success mb-3">
+			<div class="card-header card-inverse card-success mb-3 text-center">
+				<h4>Data Testing</h4>
+			</div>
+			<div class="card-block">
+				<table class="table table-hover table-striped table-bordered" id="tabelDTest">
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>V</th>
+							<th>W</th>
+							<th>X</th>
+							<th>Y</th>
+						</tr>
+					</thead>
+					<tbody id="tblDataTesting">
+						<!-- TEMPAT BUAT DATA TESTING YANG ADA (BUKAN YANG UDAH ADA CLASSNYA) -->
+					</tbody>
+				</table>				
+			</div>
+		</div>
+		<br>
+		<button type="button" id="btnNN" class="btn btn-primary btn-lg btn-block">Generate Hasil Testing Menggunakan Algoritma NN-1, dan NN-K</button>
+		<br>
+		<div class="row">
+			<div class="col-12">
+				<div class="card card-outline-danger mb-3">
+					<div class="card-header card-inverse card-danger mb-3 text-center">
+						<h4>Algoritma 1-NN</h4>
+					</div>
+					<div class="card-block">
+						<table class="table table-hover table-striped table-bordered" id="tabelDTest">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>V</th>
+									<th>W</th>
+									<th>X</th>
+									<th>Y</th>
+									<th>CLASS</th>
+									<th>Hasil</th>
+								</tr>
+							</thead>
+							<tbody id="tblHasil1">
+								<!-- TEMPAT BUAT HASIL 1-NN) -->
+							</tbody>
+						</table>
+						<br>
+						<div id="report1">
+							<!-- TEMPAT BUAT REPORT -->
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-12">
+				<div class="card card-outline-warning mb-3">
+					<div class="card-header card-inverse card-warning mb-3 text-center">
+						<h4>Algoritma 3-NN</h4>
+					</div>
+					<div class="card-block">
+						<table class="table table-hover table-striped table-bordered" id="tabelDTest">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>V</th>
+									<th>W</th>
+									<th>X</th>
+									<th>Y</th>
+									<th>CLASS</th>
+									<th>Hasil</th>
+								</tr>
+							</thead>
+							<tbody id="tblHasil3">
+								<!-- TEMPAT BUAT HASIL 3-NN) -->
+							</tbody>
+						</table>
+						<br>
+						<div id="report3">
+							<!-- TEMPAT BUAT REPORT -->
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-12">
+				<div class="card card-outline-success mb-3">
+					<div class="card-header card-inverse card-primary mb-3 text-center">
+						<h4>Algoritma 5-NN</h4>
+					</div>
+					<div class="card-block">
+						<table class="table table-hover table-striped table-bordered" id="tabelDTest">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>V</th>
+									<th>W</th>
+									<th>X</th>
+									<th>Y</th>
+									<th>CLASS</th>
+									<th>Hasil</th>
+								</tr>
+							</thead>
+							<tbody id="tblHasil5">
+								<!-- TEMPAT BUAT HASIL 5-NN) -->
+							</tbody>
+						</table>
+						<br>
+						<div id="report5">
+							<!-- TEMPAT BUAT REPORT -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="js/jquery-3.1.1.min.js"></script>
+	<script src="js/tether-1.4.0.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script>
+		$(document).ready(function(){
+
+			var class1=0; 								//jumlah data class 1
+			var class2=0; 								//jumlah data class 2
+			var class3=0; 								//jumlah data class 3
+			// var class4=0; 							//jumlah data class 4
+
+			var datatraining=[]; 						//data keseluruhan
+			var datatesting=[]; 						//data untuk testing
+
+			var dataClass1=[]; 							//pemecah data untuk data spesifik class1
+			var dataClass2=[]; 							//pemecah data untuk data spesifik class2
+			var dataClass3=[]; 							//pemecah data untuk data spesifik class3
+			var dataClass4=[]; 							//pemecah data untuk data spesifik class4
+
+			var dataTrainignFiltered=[]; 				//Ini data training yang sudah diambil atau sudah fix
+			var tempobject={}; 							//temporary object buat bikin array of object dari csv-->data training
+
+			$.ajax({									//fungsi ajax load data .csv
+				url: 'iris.csv',
+				dataType: 'text',
+			}).done(loadData);
+
+			$('#btnNN').click(function(){				//Setting button onclick listener
+				nearestNeighbor(1);
+				nearestNeighbor(3);
+				nearestNeighbor(5);
+				// nearestNeighbor(15);
+			});
+
+			function pitagoras(v1,w1,x1,y1,v2,w2,x2,y2){			//FUNGSI PITAGORAS, TOLONG DISESUAIKAN DENGAN JUMLAH ATRIBUT
+				hasil = Math.sqrt(Math.pow((v1-v2),2) + Math.pow((w1-w2),2) + Math.pow((x1-x2),2) + Math.pow((y1-y2),2));
+				console.log(hasil);
+				return hasil;
+			}
+
+			function vote(n,arrayrank){
+				var votearray = [];
+				var counter1 = 0;
+				var counter2 = 0;
+				var counter3 = 0;
+				var counter4 = 0;
+				if(n==1){
+					return arrayrank[0].class;
+				} else {
+					for(var indeks=1;indeks<=n;indeks++){
+						if(arrayrank[indeks].class=="Iris-setosa")
+							counter1++;
+						else if(arrayrank[indeks].class=="Iris-versicolor")
+							counter2++;
+						else if(arrayrank[indeks].class=="Iris-virginica")
+							counter3++;
+						else
+							counter4++;
+					}
+					console.log("===============================================");
+					console.log("voting kelas 1 : "+counter1);
+					console.log("voting kelas 2 : "+counter2);
+					console.log("voting kelas 3 : "+counter3);
+					console.log("voting kelas 4 : "+counter4);
+					console.log("===============================================");
+					votearray.push({voting:counter1,class:"Iris-setosa"},{voting:counter2,class:"Iris-versicolor"},{voting:counter3,class:"Iris-virginica"},{voting:counter4,class:4});
+					votearray.sort(function(a,b){
+						return b.voting - a.voting;
+					});
+					// console.log(votearray);
+					return votearray[0].class;
+				}				
+			}
+
+			function tampiltabel(n,indeks,kelas){
+				var tabel = '<tr>';
+
+				tabel += '<td>'+(indeks+1)+'</td>';
+				tabel += '<td>'+datatesting[indeks].v+'</td>';
+				tabel += '<td>'+datatesting[indeks].w+'</td>';
+				tabel += '<td>'+datatesting[indeks].x+'</td>';
+				tabel += '<td>'+datatesting[indeks].y+'</td>';
+				tabel += '<td>'+kelas+'</td>';
+				if(datatesting[indeks].class == kelas){
+					tabel += '<td>Benar</td>';
+				} else {
+					tabel += '<td>Salah</td>';
+				}
+
+				$('#tblHasil'+n).append(tabel);
+			}
+
+			function nearestNeighbor(n){
+				var ranking = [];
+				var classobject = {};
+				var hasilkelas = "";
+				var error =0;
+				for(var i=0; i<datatesting.length; i++){
+					hasilkelas = "";
+					for(var j=0; j<dataTrainignFiltered.length; j++){
+						classobject.value = pitagoras(datatesting[i].v,datatesting[i].w,datatesting[i].x,datatesting[i].y,dataTrainignFiltered[j].v,dataTrainignFiltered[j].w,dataTrainignFiltered[j].x,dataTrainignFiltered[j].y);
+						classobject.class = dataTrainignFiltered[j].class;
+						ranking.push(classobject);
+						classobject={}
+					}
+					ranking.sort(function(a,b){
+						return a.value - b.value;
+					});
+					hasilkelas=vote(n,ranking); //Hasil dari voting
+					console.log(ranking);
+					// console.log(hasilkelas);
+					tampiltabel(n,i,hasilkelas);
+
+					if(datatesting[i].class != hasilkelas)
+						error++;
+
+					ranking = [];
+					console.log("-------------------------------------------------------------------");				
+				}
+				$('#report'+n).append("<p>Error : "+error+"</p>");
+				console.log("+=+=+=+=+=+==+==+++===+======+++======+++=+==+==++===++++=========++++=++=++++==+====+++=")
+			}
+
+			function nearestNeighborObjectNodisplay(n){
+				var ranking = [];
+				var classobject = {};
+				var hasilkelas = "";
+				var error =0;
+				for(var i=0; i<datatesting.length; i++){
+					hasilkelas = "";
+					for(var j=0; j<dataTrainignFiltered.length; j++){
+						classobject.value = pitagoras(datatesting[i].v,datatesting[i].w,datatesting[i].x,datatesting[i].y,dataTrainignFiltered[j].v,dataTrainignFiltered[j].w,dataTrainignFiltered[j].x,dataTrainignFiltered[j].y);
+						classobject.class = dataTrainignFiltered[j].class;
+						ranking.push(classobject);
+						classobject={}
+					}
+					ranking.sort(function(a,b){
+						return a.value - b.value;
+					});
+					hasilkelas=vote(n,ranking); //Hasil dari voting
+					console.log(ranking);
+					// console.log(hasilkelas);
+					// tampiltabel(n,i,hasilkelas);
+
+					if(datatesting[i].class != hasilkelas)
+						error++;
+
+					ranking = [];
+					console.log("-------------------------------------------------------------------");				
+				}
+				$('#report'+n).append("<p>Error : "+error+" ( "+((error/datatesting.length)*100)+" % )"+"</p>");
+				console.log("+=+=+=+=+=+==+==+++===+======+++======+++=+==+==++===++++=========++++=++=++++==+====+++=");
+				return (error/datatesting.length)*100;
+			}
+
+			function nearestNeighborNoDisplay(n){
+				var ranking = [];
+				var classobject = {};
+				var hasilkelas = "";
+				var error =0;
+
+				for(var i=0; i<datatesting[0].length; i++){
+					hasilkelas = "";
+					for(var j=0; j<dataTrainignFiltered.length; j++){
+						classobject.value = pitagoras(datatesting[0][i].v,datatesting[0][i].w,datatesting[0][i].x,datatesting[0][i].y,dataTrainignFiltered[j].v,dataTrainignFiltered[j].w,dataTrainignFiltered[j].x,dataTrainignFiltered[j].y);
+						classobject.class = dataTrainignFiltered[j].class;
+
+						//====================================================================
+						// console.log("VALUE : ");
+						// console.log(classobject.value);
+						// console.log("CLASS : ");
+						// console.log(classobject.class);
+						//====================================================================
+						ranking.push(classobject);
+						// console.log(ranking);
+						classobject={};
+					}
+					ranking.sort(function(a,b){
+						return a.value - b.value;
+					});
+					hasilkelas=vote(n,ranking); //Hasil dari voting
+					// console.log(ranking);
+					// console.log(hasilkelas);
+					// tampiltabel(n,i,hasilkelas);
+
+					if(datatesting[0][i].class != hasilkelas)
+						error++;
+
+					ranking = [];
+					console.log("-------------------------------------------------------------------");				
+				}
+				$('#report'+n).append("<p>Error : "+error+" ( "+((error/datatesting[0].length)*100)+" % )"+"</p>");
+				console.log("+=+=+=+=+=+==+==+++===+======+++======+++=+==+==++===++++=========++++=++=++++==+====+++=");
+				return (error/datatesting[0].length)*100;
+			}
+
+			function tabelDataTesting(){
+				var tabel = '<tbody>';
+				for(var baris = 0; baris < datatesting.length; baris++){
+					tabel += '<tr>';
+					tabel += '<td>'+(baris+1)+'</td>';
+					tabel += '<td>'+datatesting[baris].v+'</td>';
+					tabel += '<td>'+datatesting[baris].w+'</td>';
+					tabel += '<td>'+datatesting[baris].x+'</td>';
+					tabel += '<td>'+datatesting[baris].y+'</td>';
+					tabel += '</tr>'
+				}
+				$('#tabelDTest').append(tabel);
+			}
+
+			function tabelDataTrainingFilter(){
+				var tabel = '<tbody>';
+				// console.log(dataTrainignFiltered.length);
+				for(var baris = 0; baris < dataTrainignFiltered.length; baris++){
+					tabel += '<tr>';
+					tabel += '<td>'+(baris+1)+'</td>';
+					tabel += '<td>'+dataTrainignFiltered[baris].v+'</td>';
+					tabel += '<td>'+dataTrainignFiltered[baris].w+'</td>';
+					tabel += '<td>'+dataTrainignFiltered[baris].x+'</td>';
+					tabel += '<td>'+dataTrainignFiltered[baris].y+'</td>';
+					tabel += '<td>'+dataTrainignFiltered[baris].class+'</td>';
+					tabel += '</tr>';
+				}				
+				// console.log(dataTrainignFiltered);
+				$('#tabelDT').append(tabel);
+
+				tabelDataTesting();
+			}
+
+			function bootstrap(){
+				var n = 5;
+				var eksperimen = 10;
+				var panjang = datatraining.length;
+				var dataScatter = [];
+				var errorArr = []
+				datatesting = [];
+
+				for(var e=0;e<eksperimen;e++){
+					dataTrainignFiltered = datatraining.slice();
+
+					var random = Math.floor((Math.random() * (dataTrainignFiltered.length-1)) + 1);
+					var randomRange = Math.floor((Math.random() * 3) + 1);
+
+					dataScatter.push(dataTrainignFiltered.splice(random,randomRange));
+
+					for(var indeks=0;indeks<dataScatter.length;indeks++){
+						for(var indeks2=0;indeks2<dataScatter[indeks].length;indeks2++){
+							datatesting.push(dataScatter[indeks][indeks2]);
+						}
+						
+					}
+
+					for(var indeks=0;indeks<randomRange;indeks++){
+						var random2 = Math.floor((Math.random() * (panjang-1)) + 1);
+						dataTrainignFiltered.push(dataTrainignFiltered[random2])
+					}
+					console.log("DATA TRAINING FILTER");	
+					console.log(dataTrainignFiltered);		
+					console.log("DATA TESTINGNYA");	
+					console.log(datatesting);
+
+					errorArr.push(nearestNeighborObjectNodisplay(n));
+
+					dataScatter = [];	
+					datatesting = [];
+				}
+
+				console.log(errorArr);	
+				var total = 0;
+				for(var b=0;b<errorArr.length;b++){
+					total+=errorArr[b];
+				}
+				var ratarata = total/errorArr.length;
+
+				$('#report'+n).append("<p>Rata-Rata : "+(ratarata)+" %</p>");
+			}
+
+			function kfoldCross(){
+				var n = 5; //jumlah k-NN
+				var panjang = datatraining.length; //length data training keseluruhan
+				// var segmen2 = 5; //Banyaknya percobaan yang dilakukan
+				var segmen2 = 150; //Ini buat validasi LOO, langsung ganti aja segmennya jadi 150
+				var interval = Math.floor(panjang/segmen2); //berapa banyak data per segmen
+				var errorArr = [];
+				
+				datatesting = [];
+
+				// console.log("DATA TRAINING SEBELUM LOOPING EKSPERIMEN - ");
+				// console.log(datatraining);
+
+				for(var eksp = 0;eksp<segmen2;eksp++){
+					var indeksMulai = eksp * interval;
+					dataTrainignFiltered = datatraining.slice();
+
+					datatesting.push(dataTrainignFiltered.splice(indeksMulai,interval)); //Isi datatesting dengan masing masing array
+
+					//================================================================================
+					// console.log("DATA TRAINING INDEKS - "+eksp)
+					// console.log(dataTrainignFiltered);
+
+					// console.log("DATA TESTING INDEKS - "+eksp);
+					// console.log(datatesting);
+
+					//================================================================================
+
+					errorArr.push(nearestNeighborNoDisplay(n));
+					datatesting = []; //Kosongkan datatesting
+				}
+
+				console.log(errorArr);	
+				var total = 0;
+				for(var b=0;b<errorArr.length;b++){
+					total+=errorArr[b];
+				}
+				var ratarata = total/errorArr.length;
+
+				$('#report'+n).append("<p>Rata-Rata : "+(ratarata)+" %</p>");
+
+				// console.log("DATA TRAINING SETELAH LOOPING EKSPERIMEN - ");
+				// console.log(datatraining);
+			}
+
+			function subSampling(){
+				var n = 5;
+				var fixedSample = 8;
+				var segmen = 5;
+				var experimen = 10;
+				var arraysample = [];
+				var errorArr = [];
+
+				// console.log("DATA TRAINING : ")
+				// console.log(datatraining);
+
+				var dataScatter = [];
+				datatesting=[];
+
+				for(var e=0;e<experimen;e++){
+					dataTrainignFiltered = datatraining.slice();
+					console.log(dataTrainignFiltered);
+
+					for(var seg=0;seg<segmen;seg++){
+						var randomParam = dataTrainignFiltered.length-fixedSample;
+						console.log("RANDOM PARAM : ");
+						console.log(randomParam);
+
+						var random = Math.floor((Math.random() * (randomParam-1)) + 1);
+
+						dataScatter.push(dataTrainignFiltered.splice(random,fixedSample));
+					}
+
+					console.log(dataScatter);
+					console.log(datatesting);
+
+					for(var indeks=0;indeks<dataScatter.length;indeks++){
+						for(var indeks2=0;indeks2<dataScatter[indeks].length;indeks2++){
+							datatesting.push(dataScatter[indeks][indeks2]);
+						}
+						
+					}
+
+					console.log("DATA TRAINING FILTER");	
+					console.log(dataTrainignFiltered);		
+					console.log("DATA TESTINGNYA");	
+					console.log(datatesting);
+
+					errorArr.push(nearestNeighborObjectNodisplay(n));
+
+					dataScatter = [];	
+					datatesting = [];
+				}
+
+				console.log(errorArr);	
+				var total = 0;
+				for(var b=0;b<errorArr.length;b++){
+					total+=errorArr[b];
+				}
+				var ratarata = total/errorArr.length;
+
+				$('#report'+n).append("<p>Rata-Rata : "+(ratarata)+" %</p>");
+			}
+
+			function holdOutTesting(){
+				// console.log("Data Class 1 ada :"+class1);
+				for(var indeks = 0; indeks<(0.2*class1);indeks++){ //Loading data test dari kelas 1
+					datatesting.push(dataClass1.pop());
+				}
+
+				// console.log("class 1 ada :"+indeks);
+
+				// console.log("Data Class 2 ada :"+class2);
+				for(var indeks = 0; indeks<Math.floor(0.2*class2);indeks++){ //Loading data test dari kelas 1
+					datatesting.push(dataClass2.pop());
+				}
+				// console.log("class 2 ada :"+indeks);
+
+				// console.log("Data Class 3 ada :"+class3);
+				for(var indeks = 0; indeks<(0.2*class3);indeks++){ //Loading data test dari kelas 1
+					datatesting.push(dataClass3.pop());
+				}
+				// console.log("class 3 ada :"+indeks);
+
+				// console.log("Data Class 4 ada :"+class4);
+				// for(var indeks = 0; indeks<(0.2*class4);indeks++){ //Loading data test dari kelas 1
+				// 	datatesting.push(dataClass4.pop());
+				// }
+				// console.log("class 4 ada :"+indeks);
+
+				dataTrainignFiltered = dataClass1.concat(dataClass2,dataClass3);
+				tabelDataTrainingFilter();
+
+				console.log("Data Training : ");
+				console.log(dataTrainignFiltered);
+				console.log("Data Testing : ");
+				console.log(datatesting);
+			}
+
+			function pengkelasan(){
+				console.log(datatraining.length);
+				for(var x = 0; x < datatraining.length ; x++){
+					console.log("masuk loop");
+					if(x < class1){
+						dataClass1.push(datatraining[x]); //Isi datatraining buat class1
+					}else if(x < (class2+class1)){
+						dataClass2.push(datatraining[x]); //Data training class 2
+					}else if(x < (class3+class2+class1)){
+						dataClass3.push(datatraining[x]); //data training class 3
+					}
+					// else{
+					// 	dataClass4.push(datatraining[x]); //data training class 4
+					// }
+				}
+
+				holdOutTesting();
+
+				// console.log(dataClass1);
+				// console.log(dataClass2);
+				// console.log(dataClass3);
+				// console.log(dataClass4);
+			}
+
+			function loadData(data){
+				console.log("masuk");
+				var semuaBaris = data.split(/\r?\n|\r/);
+				var tabel = '<table class="table table-hover table-striped table-bordered h-50">';
+				for(var singleBaris = 0; singleBaris < semuaBaris.length-1; singleBaris++){
+					if(singleBaris === 0){
+						tabel += '<thead>';
+						tabel += '<tr>';
+					} else {
+						tabel += '<tr>';
+					}
+
+					var cellBaris = semuaBaris[singleBaris].split(',');
+
+					for(var i = 0; i < cellBaris.length; i++){
+						if(singleBaris === 0){
+							tabel += '<th>';
+							tabel += cellBaris[i];
+							tabel += '</th>';
+						}else{
+							if(i==0){
+								// console.log("masuknomor"+cellBaris[i]);
+								tempobject.v = cellBaris[i];
+							}else if(i==1){
+								// console.log("masukx"+cellBaris[i]);
+								tempobject.w = cellBaris[i];
+							}else if(i==2){
+								// console.log("masuky"+cellBaris[i]);
+								tempobject.x = cellBaris[i];
+							}else if(i==3){
+								tempobject.y = cellBaris[i];
+							}else if(i==4){
+								// console.log("masukclass"+cellBaris[i]);
+								tempobject.class = cellBaris[i];
+								if(cellBaris[i]=="Iris-setosa")
+									class1++;
+								else if(cellBaris[i]=="Iris-versicolor")
+									class2++;
+								else if(cellBaris[i]=="Iris-virginica")
+									class3++;
+							}
+							
+							tabel += '<td>';
+							tabel += cellBaris[i];
+							tabel += '</td>';
+						}
+					}				
+
+					if (singleBaris === 0) {
+						tabel += '</tr>';
+						tabel += '</thead>';
+						tabel += '<tbody>';
+					}else{
+						tabel += '</tr>';
+						datatraining.push(tempobject); //push object pada array
+						tempobject = {};
+					}
+				}
+				tabel += '</tbody>';
+				tabel += '</table>';
+				
+				// console.log(class1);
+				// console.log(class2);
+				// console.log(class3);
+				// console.log(class4);
+				// console.log(datatraining);
+				$('#tblLengkap').append(tabel);
+
+				// pengkelasan();  //Yang ini metode pembuatan data trainingnya
+				// kfoldCross();
+				// subSampling();
+				bootstrap();
+			}
+		});
+	</script>
+</body>
+</html>

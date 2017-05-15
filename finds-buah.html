@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- REQUIRED METAS -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- CSS BOOTSTRAP -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+</head>
+<body>
+  <div class="container-fluid">
+    <h1 class="text-center">Algoritma Find S - Buah-Buahan</h1>
+    <h6 class="text-center">Dimas Rizky H.P. - 2110141011 - 3 D4 IT A</h6>
+    <br>
+    <div class="card">
+      <div class="card-block">
+        <div class="table">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Panjang</th>
+                <th>Lebar</th>
+                <th>Nama Buah</th>
+              </tr>
+            </thead>
+            <tbody>  
+              <tr>
+                <th scope="row">1</th>
+                <td id="panjang1"></td>
+                <td id="lebar1"></td>
+                <td id="namabuah1"></td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td id="panjang2"></td>
+                <td id="lebar2"></td>
+                <td id="namabuah2"></td>
+              </tr>
+              <tr>
+                <th scope="row">3</th>
+                <td id="panjang3"></td>
+                <td id="lebar3"></td>
+                <td id="namabuah3"></td>
+              </tr>
+            </tbody>            
+          </table>
+        </div>
+      </div>
+    </div>
+    <br>
+    <h3 class="text-center">Hipotesa Pisang</h3>
+    <br>
+    <div class="card">
+      <div class="card-block">
+        <div class="penampungalgoritma">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Iterasi</th>
+                <th>Panjang(*)</th>
+                <th>Lebar(*)</th>
+              </tr>
+            </thead>
+            <tbody id="algojalanpisang">
+              <tr>
+                <th scope="row">0</th>
+                <td>*</td>
+                <td>*</td>
+              </tr>
+            </tbody>
+          </table>
+          <button id="btnpisang" type="button" class="btn btn-primary">Hipotesa Pisang</button>&nbsp<span id="hasilpisang"></span>          
+        </div>
+      </div>
+    </div>
+    <br>
+    <h3 class="text-center">Hipotesa Apel</h3>
+    <br>
+    <div class="card">
+      <div class="card-block">
+        <div class="penampungalgoritma">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Iterasi</th>
+                <th>Panjang(*)</th>
+                <th>Lebar(*)</th>
+              </tr>
+            </thead>
+            <tbody id="algojalanapel">
+              <tr>
+                <th scope="row">0</th>
+                <td>*</td>
+                <td>*</td>
+              </tr>
+            </tbody>
+          </table>
+          <button id="btnapel" type="button" class="btn btn-primary">Hipotesa Apel</button><span id="hasilapel"></span>      
+        </div>
+      </div>
+    </div>
+
+    <br>
+    <h3 class="text-center">Test Hipotesa</h3>
+    <br>
+    <div class="card">
+      <div class="card-block">
+        <form>
+          <div class="form-group">
+            <label for="inputPanjang">Panjang</label>
+            <input type="text" class="form-control" id="inputPanjang" placeholder="Masukan Atribut Panjang">
+          </div>
+          <div class="form-group">
+            <label for="inputLebar">Lebar</label>
+            <input type="text" class="form-control" id="inputLebar" placeholder="Masukan Atribut Lebar">
+          </div>          
+        </form>
+
+        <button class="btn btn-primary" id="btntest">Check</button>
+        <br><br>
+        <h3>Hasil Hipotesa Pisang : <span id="penampunghasil"></span></h3>
+        <br>
+        <h3>Hasil Hipotesa Apel : <span id="penampunghasil2"></span></h3>
+      </div>
+    </div>
+  </div>
+  <!-- FILE JQUERY, TETHER, JS BOOTSTRAP -->
+  <script src="js/jquery-3.1.1.min.js"></script>
+  <script src="js/tether-1.4.0.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script>
+    $(document).ready(function(){
+      var databuah = [
+        {panjang:"panjang",lebar:"sedang",buah:"pisang"},
+        {panjang:"panjang",lebar:"pendek",buah:"pisang"},
+        {panjang:"pendek",lebar:"pendek",buah:"apel"}
+      ];
+      var counterpisang = 0;
+      var counterapel = 0;
+      var hipotesapisang = [];
+      var hipotesapel = [];
+
+      for(i = 0; i<databuah.length;i++){
+        if(databuah[i].buah == "pisang"){
+          hipotesapisang.push(databuah[i]);
+        }else{
+          hipotesapel.push(databuah[i]);
+        }
+      }
+
+      for(i = 0; i < databuah.length; i++){
+        $("#panjang"+(i+1)).text(databuah[i].panjang);
+        $("#lebar"+(i+1)).text(databuah[i].lebar);
+        $("#namabuah"+(i+1)).text(databuah[i].buah);
+      }
+
+      $("#btnpisang").click(function(){
+        var flag_panjang = 0;
+        var flag_lebar = 0;
+
+        if(counterpisang==0){
+          $("#algojalanpisang").append("<tr><th scope='row'>"+(counterpisang+1)+"</th><td>"+hipotesapisang[counterpisang].panjang+"</td><td>"+hipotesapisang[counterpisang].lebar+"</td></tr>");
+        }else{
+          if(hipotesapisang[counterpisang].panjang == hipotesapisang[counterpisang-1].panjang){
+            flag_panjang = 1;
+          }
+          if(hipotesapisang[counterpisang].lebar == hipotesapisang[counterpisang-1].lebar){
+            flag_lebar = 1;
+          }
+
+          if(flag_panjang == 1 && flag_lebar == 1){
+            $("#algojalanpisang").append("<tr><th scope='row'>"+(counterpisang+1)+"</th><td>"+hipotesapisang[counter].panjang+"</td><td>"+hipotesapisang[counterpisang].lebar+"</td></tr>");
+          }else if(flag_panjang == 1 && flag_lebar ==0){
+            console.log("jalan");
+            $("#algojalanpisang").append("<tr><th scope='row'>"+(counterpisang+1)+"</th><td>"+hipotesapisang[counterpisang].panjang+"</td><td>?</td></tr>");
+            hipotesapisang[counterpisang].lebar = "?";
+
+          }else if(flag_panjang == 0 && flag_lebar == 1){
+            $("#algojalanpisang").append("<tr><th scope='row'>"+(counter+1)+"</th><td>?</td><td>"+hipotesapisang[counterpisang].lebar+"</td></tr>");
+            hipotesapisang[counterpisang].panjang = "?";
+
+          }else if(flag_panjang == 0  && flag_lebar == 0){
+            $("#algojalanpisang").append("<tr><th scope='row'>"+(counterpisang+1)+"</th><td>?</td><td>?</td></tr>");
+            hipotesapisang[counterpisang].panjang = "?";
+            hipotesapisang[counterpisang].lebar = "?";
+          }
+        }
+        counterpisang++;
+        flag_panjang = 0;
+        flag_lebar = 0;
+
+        if (counterpisang == hipotesapisang.length) {
+          $("#btnpisang").attr("disabled", true);
+          $("#hasilpisang").text("H("+hipotesapisang[counterpisang-1].panjang+", "+hipotesapisang[counterpisang-1].lebar+") = Pisang");
+        }
+      });
+
+      $("#btnapel").click(function(){
+        var flag_panjang = 0;
+        var flag_lebar = 0;
+
+        if(counterapel==0){
+          $("#algojalanapel").append("<tr><th scope='row'>"+(counterapel+1)+"</th><td>"+hipotesapel[counterapel].panjang+"</td><td>"+hipotesapel[counterapel].lebar+"</td></tr>");
+        }else{
+          if(hipotesapel[counterapel].panjang == hipotesapel[counterapel-1].panjang){
+            flag_panjang = 1;
+          }
+          if(hipotesapel[counterapel].lebar == hipotesapel[counterapel-1].lebar){
+            flag_lebar = 1;
+          }
+
+          if(flag_panjang == 1 && flag_lebar == 1){
+            $("#algojalanapel").append("<tr><th scope='row'>"+(counterapel+1)+"</th><td>"+hipotesapel[counterapel].panjang+"</td><td>"+hipotesapel[counterapel].lebar+"</td></tr>");
+          }else if(flag_panjang == 1 && flag_lebar ==0){
+            $("#algojalanapel").append("<tr><th scope='row'>"+(counterapel+1)+"</th><td>"+hipotesapel[counterapel].panjang+"</td><td>?</td></tr>");
+            hipotesapel[counterapel].lebar = "?";
+
+          }else if(flag_panjang == 0 && flag_lebar == 1){
+            $("#algojalanapel").append("<tr><th scope='row'>"+(counterapel+1)+"</th><td>?</td><td>"+hipotesapel[counterapel].lebar+"</td></tr>");
+            hipotesapel[counterapel].panjang = "?";
+
+          }else if(flag_panjang == 0  && flag_lebar == 0){
+            $("#algojalanpisang").append("<tr><th scope='row'>"+(counterapel+1)+"</th><td>?</td><td>?</td></tr>");
+            hipotesapel[counterapel].panjang = "?";
+            hipotesapel[counterapel].lebar = "?";
+          }
+        }
+        counterapel++;
+        flag_panjang = 0;
+        flag_lebar = 0;
+
+        if (counterapel == hipotesapel.length) {
+          $("#btnapel").attr("disabled", true);
+          $("#hasilapel").text("H("+hipotesapel[counterapel-1].panjang+", "+hipotesapel[counterapel-1].lebar+") = Pisang");
+        }
+      });
+
+      $("#btntest").click(function(){
+        var flag_panjang = 0;
+        var flag_lebar = 0;
+        var flag_panjang2 = 0;
+        var flag_lebar2 = 0;
+
+        var panjang = $("#inputPanjang").val();
+        var lebar = $("#inputLebar").val();
+
+        //Cek pisang
+        if (hipotesapisang[hipotesapisang.length-1].panjang != "?") {
+          if(panjang == hipotesapisang[hipotesapisang.length-1].panjang)
+            flag_panjang = 1;
+          else
+            flag_panjang = 0;
+        }else{
+          flag_panjang = 1;
+        }
+
+        if (hipotesapisang[hipotesapisang.length-1].lebar != "?") {
+          if(lebar == hipotesapisang[hipotesapisang.length-1].lebar)
+            flag_lebar =1;
+          else
+            flag_lebar = 0;
+        }else{
+          flag_lebar = 1;
+        }
+
+        if (flag_panjang == 1 && flag_lebar == 1) {
+          $("#penampunghasil").text("Buah ini merupakan buah pisang");
+        }else{
+          $("#penampunghasil").text("Buah ini bukan buah pisang");
+        }
+
+        //cek apel
+        if(hipotesapel[hipotesapel.length-1].panjang != "?"){
+          if(panjang == hipotesapel[hipotesapel.length-1].panjang)
+            flag_panjang2 = 1;
+          else
+            flag_panjang2 = 0;
+        }else{
+          flag_panjang2 = 1;
+        }
+
+        if(hipotesapel[hipotesapel.length-1].lebar != "?"){
+          if (lebar == hipotesapel[hipotesapel.length-1].lebar)
+            flag_lebar2 = 1;
+          else
+            flag_lebar2 = 0;
+        }else{
+          flag_lebar2 = 1
+        }
+
+        if(flag_panjang2 == 1 && flag_lebar2 == 1){
+          $("#penampunghasil2").text("Buah ini merupakan buah apel");
+        }else{
+          $("#penampunghasil2").text("Buah ini bukan buah apel");
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- REQUIRED METAS -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- CSS BOOTSTRAP -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+</head>
+<body>
+  <div class="container-fluid">
+    <h1 class="text-center">Algoritma Find S - Kolesterol</h1>
+    <h6 class="text-center">Dimas Rizky H.P. - 2110141011 - 3 D4 IT A</h6>
+    <br>
+    <div class="card">
+      <div class="card-block">
+        <div class="table">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Umur</th>
+                <th>Kegemukan</th>
+                <th>Hipertensi</th>
+              </tr>
+            </thead>
+            <tbody>  
+              <tr>
+                <th scope="row">1</th>
+                <td id="umur1"></td>
+                <td id="kegemukan1"></td>
+                <td id="hipertensi1"></td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td id="umur2"></td>
+                <td id="kegemukan2"></td>
+                <td id="hipertensi2"></td>
+              </tr>
+              <tr>
+                <th scope="row">3</th>
+                <td id="umur3"></td>
+                <td id="kegemukan3"></td>
+                <td id="hipertensi3"></td>
+              </tr>
+              <tr>
+                <th scope="row">4</th>
+                <td id="umur4"></td>
+                <td id="kegemukan4"></td>
+                <td id="hipertensi4"></td>
+              </tr>
+              <tr>
+                <th scope="row">5</th>
+                <td id="umur5"></td>
+                <td id="kegemukan5"></td>
+                <td id="hipertensi5"></td>
+              </tr>
+            </tbody>            
+          </table>
+        </div>
+      </div>
+    </div>
+    <br>
+    <h3 class="text-center">Hipotesa hipertensi</h3>
+    <br>
+    <div class="card">
+      <div class="card-block">
+        <div class="penampungalgoritma">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Iterasi</th>
+                <th>umur(*)</th>
+                <th>kegemukan(*)</th>
+              </tr>
+            </thead>
+            <tbody id="algojalanhipertensi">
+              <tr>
+                <th scope="row">0</th>
+                <td>*</td>
+                <td>*</td>
+              </tr>
+            </tbody>
+          </table>
+          <button id="btnhipertensi" type="button" class="btn btn-primary">Hipotesa Hipertensi</button>&nbsp<span id="hasilhipertensi"></span>          
+        </div>
+      </div>
+    </div>
+    <br>
+    <h3 class="text-center">Hipotesa tidakhipertensi</h3>
+    <br>
+    <div class="card">
+      <div class="card-block">
+        <div class="penampungalgoritma">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Iterasi</th>
+                <th>Umur(*)</th>
+                <th>Kegemukan(*)</th>
+              </tr>
+            </thead>
+            <tbody id="algojalantidakhipertensi">
+              <tr>
+                <th scope="row">0</th>
+                <td>*</td>
+                <td>*</td>
+              </tr>
+            </tbody>
+          </table>
+          <button id="btntidakhipertensi" type="button" class="btn btn-primary">Hipotesa Tidak Hipertensi</button><span id="hasiltidakhipertensi"></span>      
+        </div>
+      </div>
+    </div>
+
+    <br>
+    <h3 class="text-center">Test Hipotesa</h3>
+    <br>
+    <div class="card">
+      <div class="card-block">
+        <form>
+          <div class="form-group">
+            <label for="inputUmur">umur</label>
+            <input type="text" class="form-control" id="inputUmur" placeholder="Masukan Atribut Umur">
+          </div>
+          <div class="form-group">
+            <label for="inputKegemukan">kegemukan</label>
+            <input type="text" class="form-control" id="inputKegemukan" placeholder="Masukan Atribut Kegemukan">
+          </div>          
+        </form>
+
+        <button class="btn btn-primary" id="btntest">Check</button>
+        <br><br>
+        <h3>Hasil Hipotesa hipertensi : <span id="penampunghasil"></span></h3>
+        <br>
+        <h3>Hasil Hipotesa tidakhipertensi : <span id="penampunghasil2"></span></h3>
+      </div>
+    </div>
+  </div>
+  <!-- FILE JQUERY, TETHER, JS BOOTSTRAP -->
+  <script src="js/jquery-3.1.1.min.js"></script>
+  <script src="js/tether-1.4.0.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script>
+    $(document).ready(function(){
+      var datahipertensi = [
+        {umur:"muda",kegemukan:"gemuk",hipertensi:"tidak hipertensi"},
+        {umur:"muda",kegemukan:"sangat gemuk",hipertensi:"tidak hipertensi"},
+        {umur:"paruh baya",kegemukan:"gemuk",hipertensi:"tidak hpertensi"},
+        {umur:"paruh baya",kegemukan:"terlalu gemuk",hipertensi:"hipertensi"},
+        {umur:"tua",kegemukan:"terlalu gemuk",hipertensi:"hipertensi"}
+      ];
+      var counterhipertensi = 0;
+      var countertidakhipertensi = 0;
+      var hipotesahipertensi = [];
+      var hipotestidakhipertensi = [];
+
+      for(i = 0; i<datahipertensi.length;i++){
+        if(datahipertensi[i].hipertensi == "hipertensi"){
+          hipotesahipertensi.push(datahipertensi[i]);
+        }else{
+          hipotestidakhipertensi.push(datahipertensi[i]);
+        }
+      }
+
+      for(i = 0; i < datahipertensi.length; i++){
+        $("#umur"+(i+1)).text(datahipertensi[i].umur);
+        $("#kegemukan"+(i+1)).text(datahipertensi[i].kegemukan);
+        $("#hipertensi"+(i+1)).text(datahipertensi[i].hipertensi);
+      }
+
+      console.log(datahipertensi.length);
+
+      $("#btnhipertensi").click(function(){
+        var flag_umur = 0;
+        var flag_kegemukan = 0;
+
+        if(counterhipertensi==0){
+          $("#algojalanhipertensi").append("<tr><th scope='row'>"+(counterhipertensi+1)+"</th><td>"+hipotesahipertensi[counterhipertensi].umur+"</td><td>"+hipotesahipertensi[counterhipertensi].kegemukan+"</td></tr>");
+        }else{
+          if(hipotesahipertensi[counterhipertensi].umur == hipotesahipertensi[counterhipertensi-1].umur){
+            flag_umur = 1;
+          }
+          if(hipotesahipertensi[counterhipertensi].kegemukan == hipotesahipertensi[counterhipertensi-1].kegemukan){
+            flag_kegemukan = 1;
+          }
+
+          if(flag_umur == 1 && flag_kegemukan == 1){
+            $("#algojalanhipertensi").append("<tr><th scope='row'>"+(counterhipertensi+1)+"</th><td>"+hipotesahipertensi[counterhipertensi].umur+"</td><td>"+hipotesahipertensi[counterhipertensi].kegemukan+"</td></tr>");
+          }else if(flag_umur == 1 && flag_kegemukan ==0){
+            console.log("jalan");
+            $("#algojalanhipertensi").append("<tr><th scope='row'>"+(counterhipertensi+1)+"</th><td>"+hipotesahipertensi[counterhipertensi].umur+"</td><td>?</td></tr>");
+            hipotesahipertensi[counterhipertensi].kegemukan = "?";
+
+          }else if(flag_umur == 0 && flag_kegemukan == 1){
+            $("#algojalanhipertensi").append("<tr><th scope='row'>"+(counterhipertensi+1)+"</th><td>?</td><td>"+hipotesahipertensi[counterhipertensi].kegemukan+"</td></tr>");
+            hipotesahipertensi[counterhipertensi].umur = "?";
+
+          }else if(flag_umur == 0  && flag_kegemukan == 0){
+            $("#algojalanhipertensi").append("<tr><th scope='row'>"+(counterhipertensi+1)+"</th><td>?</td><td>?</td></tr>");
+            hipotesahipertensi[counterhipertensi].umur = "?";
+            hipotesahipertensi[counterhipertensi].kegemukan = "?";
+          }
+        }
+        counterhipertensi++;
+        flag_umur = 0;
+        flag_kegemukan = 0;
+
+        if (counterhipertensi == hipotesahipertensi.length) {
+          $("#btnhipertensi").attr("disabled", true);
+          $("#hasilhipertensi").text("H("+hipotesahipertensi[counterhipertensi-1].umur+", "+hipotesahipertensi[counterhipertensi-1].kegemukan+") = hipertensi");
+        }
+      });
+
+      $("#btntidakhipertensi").click(function(){
+        var flag_umur = 0;
+        var flag_kegemukan = 0;
+
+        if(countertidakhipertensi==0){
+          $("#algojalantidakhipertensi").append("<tr><th scope='row'>"+(countertidakhipertensi+1)+"</th><td>"+hipotestidakhipertensi[countertidakhipertensi].umur+"</td><td>"+hipotestidakhipertensi[countertidakhipertensi].kegemukan+"</td></tr>");
+        }else{
+          if(hipotestidakhipertensi[countertidakhipertensi].umur == hipotestidakhipertensi[countertidakhipertensi-1].umur){
+            flag_umur = 1;
+          }
+          if(hipotestidakhipertensi[countertidakhipertensi].kegemukan == hipotestidakhipertensi[countertidakhipertensi-1].kegemukan){
+            flag_kegemukan = 1;
+          }
+
+          if(flag_umur == 1 && flag_kegemukan == 1){
+            $("#algojalantidakhipertensi").append("<tr><th scope='row'>"+(countertidakhipertensi+1)+"</th><td>"+hipotestidakhipertensi[countertidakhipertensi].umur+"</td><td>"+hipotestidakhipertensi[countertidakhipertensi].kegemukan+"</td></tr>");
+          }else if(flag_umur == 1 && flag_kegemukan ==0){
+            $("#algojalantidakhipertensi").append("<tr><th scope='row'>"+(countertidakhipertensi+1)+"</th><td>"+hipotestidakhipertensi[countertidakhipertensi].umur+"</td><td>?</td></tr>");
+            hipotestidakhipertensi[countertidakhipertensi].kegemukan = "?";
+
+          }else if(flag_umur == 0 && flag_kegemukan == 1){
+            $("#algojalantidakhipertensi").append("<tr><th scope='row'>"+(countertidakhipertensi+1)+"</th><td>?</td><td>"+hipotestidakhipertensi[countertidakhipertensi].kegemukan+"</td></tr>");
+            hipotestidakhipertensi[countertidakhipertensi].umur = "?";
+
+          }else if(flag_umur == 0  && flag_kegemukan == 0){
+            $("#algojalantidakhipertensi").append("<tr><th scope='row'>"+(countertidakhipertensi+1)+"</th><td>?</td><td>?</td></tr>");
+            hipotestidakhipertensi[countertidakhipertensi].umur = "?";
+            hipotestidakhipertensi[countertidakhipertensi].kegemukan = "?";
+          }
+        }
+        countertidakhipertensi++;
+        flag_umur = 0;
+        flag_kegemukan = 0;
+
+        if (countertidakhipertensi == hipotestidakhipertensi.length) {
+          $("#btntidakhipertensi").attr("disabled", true);
+          $("#hasiltidakhipertensi").text("H("+hipotestidakhipertensi[countertidakhipertensi-1].umur+", "+hipotestidakhipertensi[countertidakhipertensi-1].kegemukan+") = hipertensi");
+        }
+      });
+
+      $("#btntest").click(function(){
+        var flag_umur = 0;
+        var flag_kegemukan = 0;
+        var flag_umur2 = 0;
+        var flag_kegemukan2 = 0;
+
+        var umur = $("#inputUmur").val();
+        var kegemukan = $("#inputKegemukan").val();
+
+        //Cek hipertensi
+        if (hipotesahipertensi[hipotesahipertensi.length-1].umur != "?") {
+          if(umur == hipotesahipertensi[hipotesahipertensi.length-1].umur)
+            flag_umur = 1;
+          else
+            flag_umur = 0;
+        }else{
+          flag_umur = 1;
+        }
+
+        if (hipotesahipertensi[hipotesahipertensi.length-1].kegemukan != "?") {
+          if(kegemukan == hipotesahipertensi[hipotesahipertensi.length-1].kegemukan)
+            flag_kegemukan =1;
+          else
+            flag_kegemukan = 0;
+        }else{
+          flag_kegemukan = 1;
+        }
+
+        if (flag_umur == 1 && flag_kegemukan == 1) {
+          $("#penampunghasil").text("orang ini mengidap hipertensi");
+        }else{
+          $("#penampunghasil").text("orang ini tidak mengidap hipertensi");
+        }
+
+        //cek tidakhipertensi
+        if(hipotestidakhipertensi[hipotestidakhipertensi.length-1].umur != "?"){
+          if(umur == hipotestidakhipertensi[hipotestidakhipertensi.length-1].umur)
+            flag_umur2 = 1;
+          else
+            flag_umur2 = 0;
+        }else{
+          flag_umur2 = 1;
+        }
+
+        if(hipotestidakhipertensi[hipotestidakhipertensi.length-1].kegemukan != "?"){
+          if (kegemukan == hipotestidakhipertensi[hipotestidakhipertensi.length-1].kegemukan)
+            flag_kegemukan2 = 1;
+          else
+            flag_kegemukan2 = 0;
+        }else{
+          flag_kegemukan2 = 1
+        }
+
+        if(flag_umur2 == 1 && flag_kegemukan2 == 1){
+          $("#penampunghasil2").text("orang ini tidak mengidap hipertensi");
+        }else{
+          $("#penampunghasil2").text("orang ini bukan tidak tidak mengidap hipertensi");
+        }
+      });
+    });
+  </script>
+</body>
+</html>
