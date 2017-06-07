@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<!-- REQUIRED METAS -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<!-- CSS BOOTSTRAP -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/custom.css">
+</head>
+<body>
+	<div class="container-fluid w-75">
+		<div class="card text-center">
+			<div class="card-block">
+				<h4 class="card-title">Chart Scatter Optimasi GA</h4>
+				<div class="card-text" id="scatterChart">
+					
+				</div>
+				<p>Informasi lain-lainnya :</p>
+				<div class="card-text" id="kontainerInformasi">
+					
+				</div>
+			</div>
+		</div>
+
+		<br>
+
+		<div class="card">
+			<div class="card-block">
+				<h4 class="card-title">
+					Input Data & Konfigurasi
+				</h4>
+				<div class="card-text" id="input">
+					<div class="input-group">
+						<span class="input-group-addon" id="labelKluster">Jumlah K</span>
+						<input type="number" name="inputK" class="form-control" id="inputX" placeholder="Masukan Jumlah Kluster" aria-describedby="labelKluster">
+					</div>
+
+					<fieldset class="form-group">
+						<legend>Dataset</legend>
+						<div class="form-check">
+							<label class="form-check-label">
+								<input type="radio" name="opsiRadio" id="opsiRadio" value="opsiRadio" checked>
+								Ruspini Dataset
+							</label>
+						</div>
+					</fieldset>
+
+					<button id="btnGA" type="submit" class="btn btn-primary">Algoritma Genetika</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- FILE JQUERY, TETHER, JS BOOTSTRAP -->
+	<script src="js/jquery-3.1.1.min.js"></script>
+	<script src="js/tether-1.4.0.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script>
+		$(document).ready(function(){
+			var dataset = []; //data dalam bentuk array, beserta nomor dan class nya
+			var datasetPure = []; //data dalam bentuk array, tanpa kolom nomor dan class
+
+			var data; //data google chart
+			var options; //options google chart
+			var chart; //variabel chart
+
+			$.ajax({
+				url: 'RuspiniDataset.csv',
+				dataType: 'text',
+			}).done(loadData); //load dataset ruspini.csv, akan menjalankan fungsi loadData() di line #83
+
+			$('#btnGA').click(function(){
+				var jumlahK = $('#inputX').val();
+				if(jumlahK == ''){
+					jumlahK = 0;
+				}
+
+				optimasiGA(jumlahK); //Ketika button di klik, akan menjalankan fungsi algoritma genetika di line #150
+			});
+
+			function loadData(data){ //Load data dari dataset ruspini.csv
+				console.log("Mulai pembacaan data");
+				var semuaBaris = data.split(/\r?\n|\r/); //data dengan baris utuh masih berbentuk string csv utuh
+				for(var i = 0; i < semuaBaris.length-1; i++){
+
+					var singleBaris = semuaBaris[i].split(';'); //data per-baris setelah dipisah-pisah bentuknya ("1,23,14,2")
+
+					var tempArCell = []; 									// Ini algoritma untuk membuat multidimensional array
+					for(var x=0; x < singleBaris.length; x++){				//
+						if(i==0){											//
+							tempArCell.push(singleBaris[x]);				// 
+						}else{												//
+							tempArCell.push(parseInt(singleBaris[x]));		//
+						}													//
+					}														//
+					dataset.push(tempArCell);								// Menghasilkan variabel dataset yang sudah diinisialisasi pada baris #62
+				}
+
+				filterDataset();	 //Menjalankan fungsi filter dataset di baris #104
+			}
+
+			function filterDataset(){ //Fungsi ini berfungsi untuk mengubah variabel dataset, menjadi datasetpure(baris #63)
+				for(var i = 1; i < dataset.length; i++){
+					console.log("Length Dataset = "+dataset.length);
+					
+					var tempArCell = [];											//Hasilnya adalah variabel datasetpure yang berbentuk
+					for(var j = 0; j < dataset[i].length; j++){						// [ [ [x1,y2,null],[x2,y2,null],[x3,y3,null],[x4,y4,null],... ] ]
+						if(j == 1 || j == 2){										//
+							tempArCell.push(dataset[i][j]);							// inti dari algoritma ini adalah untuk memfilter data X dan Y saja
+						}else if(i == 0 && j == 3){									//
+							tempArCell.push({'type': 'string', 'role': 'style'});	// untuk nilai NULL, diperlukan untuk perihal pembuatan chart
+						}else if(i != 0 && j==3){									//
+							tempArCell.push(null);									//
+						}															//
+					}
+					datasetPure.push(tempArCell); //variabel datasetpure berisi hanya data X dan Y
+				}
+				// console.log(datasetPure);
+
+				loadChart(); //Menjalankan fungsi loadchart() di baris #125
+			}
+			
+			function loadChart(){ //Load google chart
+				google.charts.load('current', {packages: ['corechart']});
+				google.charts.setOnLoadCallback(drawChart);
+
+				function drawChart(){ // Definisi chart
+					data = new google.visualization.DataTable();
+					data.addColumn('number', 'X-axis');
+					data.addColumn('number', 'Y-axis');
+					data.addColumn({'type': 'string','role': 'style'});
+					data.addRows(datasetPure);
+
+					options = {
+						title: 'Optimasi K-Mean Dengan ALgoritma Genetika',
+						width: 1000, //ukuran lebar dalam pixel
+						height: 480, //tinggi chart dalam pixel
+						hAxis: {title: 'X Axis', minValue: 0, maxValue: 120}, //untuk sumbu x, min value dan max value di set mulai dari 0 - 120
+						vAxis: {title: 'Y Axis', minValue: 0, maxValue: 160}, //untuk sumbu y mulai dari 0 - 160
+						legend: 'none',
+						theme: 'material'
+					};
+
+					chart = new google.visualization.ScatterChart(document.getElementById('scatterChart'));
+					chart.draw(data,options); //draw chart
+				}
+			}
+
+			function optimasiGA(jmlKromosom){
+				var jmlGenerasi = 500; //Jumlah GENERASI genetic algorithm
+				var counter = 0; //counter untuk looping generasi
+				var jmlIndividu = 30; //Jumlah INDIVIDU
+				var arrPopulasi = []; //Array POPULASI AWAL
+
+				// ===================================================
+				// PEMBANGKITAN POPULASI AWAL
+				// ===================================================
+				for(x = 0; x < jmlIndividu; x++){ 				//tujuan dari looping ini adalah untuk membuat populasi kromosom awal
+					var tempArIndividu = [];					//hasilnya akan berupa multidimensional array arrPopulasi (baris #155)
+					// console.log("Jumlah Individu : "+jmlIndividu);
+
+					for(y = 0; y < jmlKromosom; y++){
+						var tempArKromosom = []; 	//ini variabel temporary untuk membuat array multidimensi layer terdalam berisi = [centroidx, centroidy]
+						for(z = 0; z < 2; z++){		//Loop pada baris ini MEMBERI NILAI GEN untuk setiap kromosom, dan akan menghasilkan KROMOSOM
+							if(z == 0){
+								tempArKromosom.push(randomNumber(0,120)); //push gen X ke kromosom, akan men-generate random number dari 0 - 120
+							}else{
+								tempArKromosom.push(randomNumber(0,160)); //push gen Y ke kromosom, random dari 0 - 160
+								console.log("Kromosom{X: "+tempArKromosom[0]+"| Y: "+tempArKromosom[1]+"}");
+							}							
+						}
+						tempArIndividu.push(tempArKromosom); //push kromosom ke individu, ini akan menghasilkan array [[centroidx1,centroidy2],[centroidx2,centroidy2],...]. Dengan kata lain, baris ini adalah untuk membuat INDIVIDU dengan cara PUSH data KROMOSOM di variabel tempARindividu ke tempArKromosom
+					}
+					console.log("");
+					console.log("-------------------");
+					console.log("Individu ke-"+x);
+					console.log("-------------------");
+					arrPopulasi.push(tempArIndividu); //push individu ke populasi, Setelah didapatkan indivicu di variabel tempArIndividu, push individu ke variabel arrPopulasi, akan menghasilkan arrPopulasi(baris #155). Dengan kata lain, ini adalah pembuatan POPULASI hasilnya adalah array dengan bentuk [ [ [x1,y2],[x2,y2],[x3,y3] ], [ [x1,y2],[x1,y2],[x1,y2] ], [ [x1,y2],[x1,y2],[x1,y2] ],... ]
+				}	//			       ------  ------  -----        ------  -----   -----        -----   -----   -----
+					//					KROMOS  KROMOS  KROMOS       KROMOS  KROMOS  KROMOS      KROMOS   KROMOS  KROMOS
+					//				---------------------------	  --------------------------   --------------------------
+					//				       INDIVIDU 1					INDIVIDU 2						INDIVIDU 3
+					//			  ------------------------------------------------------------------------------------------------
+					//															POPULASI
+				console.log(arrPopulasi);
+
+				var tempKromosom = [];
+
+				for(var w=0; w<jmlKromosom; w++){ //LOOPING ini bertujuan untuk update data pada variabel datasetPure perihal google chart
+					var tempPoint = [];				//Untuk membangkitkan titik centroid awal pada google chart
+					for(var x =0; x < 3; x++){		//Data yang diambil adalah dari individu pertama, kromosomnya di push ke array datasetPure
+						if(x==0){					
+							tempPoint.push(arrPopulasi[0][w][0]); //maksudnya push individu pertama, kromosom ke w, dan data yang di push adalah data X
+						}else if(x==1){
+							tempPoint.push(arrPopulasi[0][w][1]); //Ini yang di push adalah data Y
+						}
+						else{
+							tempPoint.push('point { shape-type: star; fill-color: #a52714; }'); //Ini keperluan untuk mewarnai titik centroid pada chart
+						}
+					}
+					datasetPure.push(tempPoint); //Update datasetPure ditambahi dengan centroid awal
+				}
+
+				console.log("Updated Data ditambahi Point : ");
+				console.log(datasetPure);
+
+				data = new google.visualization.DataTable();
+				data.addColumn('number', 'X-axis');
+				data.addColumn('number', 'Y-axis');
+				data.addColumn({'type': 'string','role': 'style'});
+				data.addRows(datasetPure);
+
+
+				chart.draw(data, options); //Update chart
+
+				var interval = setInterval(function(){ //Ini sebenarnya fungsi loop, tapi ditambahi dengan interval agar bisa muncul animasinya
+					console.log("");
+					console.log("");
+					console.log("");
+					console.log("");
+					console.log("");
+					console.log("----------------------------------");
+					console.log("GENERASI KE - "+counter);
+					console.log("----------------------------------");
+					console.log("");
+					// ===================================================
+					// CEK FITNESS MASING-MASING INDIVIDU
+					// ===================================================
+					var arrFitness = []; //Ini variabel array sebagai penampung fitness
+					var arrFitnessHist = []; //Ini variabel array yang digunakan sebagai history atau catatan, digunakan pada saat elitism
+
+					// console.log("titik centroid : ");
+					// console.log(arrPopulasi[1][1]);
+					// console.log("titik dataset : ");
+					// console.log(datasetPure);
+
+					for(x = 0; x < jmlIndividu; x++){ //Looping ini menentukan FITNESS PER INDIVIDU, akan menghasilkan variabel array fitness seperti
+						var tempFitness = 0; 			//[fitnessInd1,fitnessInd2,fitnessInd3] 		//variabel tempFitness adalah total jarak hitung per individu, ini sifatnya minimasi akan diubah dengan cara di 1/tempFitness
+
+						for(y = 1; y < datasetPure.length; y++){
+							tempFitness += jarakTerdekat(datasetPure[y],arrPopulasi[x]); //Ini menjalankan fungsi jarakTerdekat() untuk mendapatkan jarak yang mana yang akan ditambahkan ke variabel tempFitness
+						}
+
+						arrFitness.push(Math.round((1/tempFitness)*10000)); //Mengubah nilai tempfitness menjadi maksimasi dengan di / dan dikalikan 10000 agar tidak mengandung koma
+					}
+					console.log("");
+					console.log("---------Non Kumulatif----------");
+					console.log(arrFitness);
+
+					arrFitnessHist = arrFitness.slice(); // baris ini melakukan ARRAY COPY BY VALUE dari arrFitness ke arrFitnessHist
+														 // dilakukan karena arrFitness lah yang akan diubah menjadi frekuensi kumlatif
+					for(x = 1; x < arrFitness.length; x++){
+						arrFitness[x] = arrFitness[x -1] + arrFitness[x]; //Algoritma untuk membuat array fitness menjadi frekuensi kumulatif
+					}													//misal dari [2,4,1,2,2] menjadi [2,6,7,9,11] akan digunakan untuk roulette
+					// console.log("");
+					// console.log("----------Kumulatif---------");
+					// console.log(arrFitness);
+
+					// ===================================================
+					// ROULETTE MULAI
+					// ===================================================
+
+					var individuTerpilih = []; //variabel array yang berisi INDEKS dari individu yang terpilih
+					var arrInduk = []; //variabel array yang berisi individu (KROMOSOM + GEN) yang terpilih menjadi induk
+					var arrCrossover = []; //variabel array satu dimensi hasil FLATTENING dari array per individu
+
+					for(x = 0; x < jmlIndividu; x++){
+						var random = randomNumber(arrFitness[0],arrFitness[(arrFitness.length)-1]); //generate random number dengan batas minimal adalah 0
+						// console.log("Nilai random");												  dan batas maksimal adalah elemen terakhir dari array
+						// console.log(random);														  frekuensi kumulatif
+						for(y = 0; y < jmlIndividu; y++){	//Ini algoritma untuk penentuan individu mana yang terpilih
+							if(random<=arrFitness[y]){		// Jika nilai random yang didapat KURANG DARI ATAU SAMA DENGAN array fitness kumulatif (iku lah pokoke, wkwkkw)	
+								individuTerpilih.push(y); 	//YANG DI PUSH adalah INDEKS nya, BUKAN nilai fitnessnya
+								break;
+							}
+						}
+						arrInduk.push(arrPopulasi[individuTerpilih[x]]); //Push individu terpilih sesuai indeks ke arrInduk
+					}
+
+					console.log("Individu Terpilih : ");
+					console.log(individuTerpilih);
+
+					console.log("Populasi Induk : ");
+					console.log(arrInduk); //Array berisi induk yang terpilih, bentuknya seperti di baris #180
+
+					// ===================================================
+					// CROSSOVER 				//HASIL DARI PROSES CROSSOVER ADALAH ARRAY POPULASI DENGAN JUMLAH INDIVIDU YANG SAMA
+					// ===================================================
+					var batasProbCO = 0.9;				//Ini batas probabilitas Crossover terjadi, jika kurang dari batas, maka crossover dilakukan dan sebaliknya jika lebih dari batas, crossover tidak akan terjadi
+					var arrSetelahCrossover = []; //variabel array populasi individu yang sudah berubah atau mengalami crossover
+
+					for(x = 0; x< jmlIndividu; x++){	//ALGORITMA INI ADALAH UNTUK MEMBUAT MULTIDIMENSIONAL ARRAY MENJADI FLAT
+						var tempCross = [].concat.apply([], arrInduk[x]); //dari yang 	[ [genx1,geny1], [genx2,geny2], [genx3,geny3]]
+						arrCrossover.push(tempCross);					  // menjadi 	[genx1, geny1, genx2, geny2, genx3, geny3]
+					}													  // BARis #295 CUMA BERLAKU DI JAVASCRIPT
+
+					console.log("Flatten Array : ");
+					console.log(arrCrossover);
+
+					for(x = 0; x < jmlIndividu; x++){ //INI LOOPING UNTUK CROSSOVER
+						console.log("=====================================");		//NOTE : FUNGSI RANDOM ADA DI BAWAH, parameternya (min,max) baris #565
+						var indexAwal = randomNumber(0,(jmlKromosom*2)-2); 		//Ini random menentukan batas awal gen yang akan di crossover
+						if(indexAwal==0){
+							var indexAkhir = randomNumber(indexAwal+1,(jmlKromosom*2)-2); //ini sebagai pembatasan, intinya jangan sampai yang di crossover
+						}else{															  //adalah crossover gen secara keseluruhan
+							var indexAkhir = randomNumber(indexAwal+1,(jmlKromosom*2)-1);
+						}
+
+						var probCO = Math.random();	//Probabilitas di random untuk menentukan crossover akan dilakukan atau tidak
+
+						if(probCO < batasProbCO){	//Ini berarti crossover akan dilakukan
+							var temporaryCrossover = crossover(arrCrossover[x],arrCrossover[x+1],indexAwal,indexAkhir,); //FUNGSI CROSSOVER dijalankan
+																														 //BARIS #502
+							arrSetelahCrossover.push(temporaryCrossover[0]); //push ke variabel array arrSetelah Crossover
+							arrSetelahCrossover.push(temporaryCrossover[1]); //SETIAP dua INDIVIDU di crossover, akan menghasilkan 2 INDIVIDU BARU
+						}else{	//ini berarti tidak usah di crossover    	 //untuk temporaryCrossover[0] adalah individu hasil crossover yang pertama
+							arrSetelahCrossover.push(arrCrossover[x]);		//dan untuk index 1 adalah untuk individu yang kedua
+							arrSetelahCrossover.push(arrCrossover[x+1]);	
+						} //yang akan dilakukan jika tidak terjadi crossover adalah dengan mem-push individu tanpa dilakukan crossover (tidak berubah)
+						
+						x++;
+						console.log("Array Induk Setelah Crossover : ");
+						console.log(arrSetelahCrossover);
+						console.log("===========================");
+					}
+
+					// ===================================================
+					// MUTASI
+					// ===================================================
+
+					for(i = 0; i < jmlIndividu; i++){		//Ini algoritma mutasi
+						var batasProbMut = 0.1;				//Batas probabilitas mutasi, jika probabilitas kurang dari batas, maka mutasi tidak terjadi
+						var probMut = Math.random();		//probabilitas mutasi, dibangkitkan secara random dari 0-1
+						
+						if(probMut < batasProbMut){
+							console.log("Individu dimutasi : ");
+							console.log(i);
+							arrSetelahCrossover[i] = mutasi(arrSetelahCrossover[i]);	//lihat di fungsi mutasi()
+						}					
+					}
+
+					// ===================================================
+					// ELITISM
+					// ===================================================
+					var bentukAwal = [];
+					var calonPopulasi = []; //Populasi offspring, atau populasi setelah melalui fase mutasi bentuknya seperti baris #180
+					var arrBar = [];
+
+					for(x=0;x<jmlIndividu;x++){								//LOOPING MBULET INI fungsinya untuk mengubah dari flat array liat baris #296
+						for(y = 0; y<jmlKromosom*2; y++){					//kembali menjadi array multidimensional (baris #295)
+							if(y==0){
+								arrBar.push(arrSetelahCrossover[x][y]);
+								arrBar.push(arrSetelahCrossover[x][y+1]);
+								bentukAwal.push(arrBar);
+								arrBar = [];
+							}else if(y>1 && (y%2)==0){
+								arrBar.push(arrSetelahCrossover[x][y]);
+								arrBar.push(arrSetelahCrossover[x][y+1]);
+								bentukAwal.push(arrBar);
+								arrBar = [];
+							}
+						}
+					}
+
+					// console.log("Konversi bentuk awal : ");
+					// console.log(bentukAwal);
+
+					while(bentukAwal.length){
+						calonPopulasi.push(bentukAwal.splice(0,jmlKromosom));
+					}
+
+					console.log("Calon Populasi (Offspring)");
+					console.log(calonPopulasi); //Bentuknya sama seperti arrpopulasi multidimensional dimensi 3 (baris #180)
+
+					// arrInduk(baris #266) populasi induk nilai fitness berada di arrFitnessInduk
+					// calonPopulasi Populasi Offspring nilai fitness berada di arrFitnessOffspring
+
+					var arrFitnessOffspring = []; //variabel array nilai fitness populasi offspring(populasi setelah fase mutasi)
+					var arrFitnessInduk = []; //variabel array nilai fitness populasi induk(populasi sebelum fase crossover)
+
+					for(x = 0; x < jmlIndividu; x++){
+						var tempFitness = 0;
+						for(y = 1; y < datasetPure.length; y++){
+							tempFitness += jarakTerdekat(datasetPure[y],calonPopulasi[x]); //menghitung fitness untuk calonpopulasi
+						}
+
+						arrFitnessOffspring.push((1/tempFitness)); //menghitung fitness offspring(baris #348)
+					}
+
+					for(x = 0; x < jmlIndividu; x++){
+						var tempFitness = 0;
+						for(y = 1; y < datasetPure.length; y++){
+							tempFitness += jarakTerdekat(datasetPure[y],arrInduk[x]);
+						}
+
+						arrFitnessInduk.push((1/tempFitness)); //menghitung fitness induk
+					}
+
+					console.log("");
+					console.log("---------Non Kumulatif Offspring----------");
+					console.log(arrFitnessOffspring);
+					console.log("---------Non Kumulatif Induk------");
+					console.log(arrFitnessInduk);
+
+					var banyakIndividuElitism = calonPopulasi.length + arrInduk.length; //panjang array gabungan
+					var individuElitsm = arrInduk.concat(calonPopulasi); //Menggabungkan antara array offspring dan induk
+					var arrGabunganFitnessElitism = arrFitnessInduk.concat(arrFitnessOffspring); //menggabungkan antara array fitness offspring dan fitness induk
+
+					console.log("");
+					console.log("----------Gabungan Individu---------------");
+					console.log(individuElitsm);
+					console.log("----------Gabungan Fitness---------------");
+					console.log(arrGabunganFitnessElitism);
+
+					var fitnessBernomor = []; //variabel array gabungan fitness namun diberi nomor
+
+					for(var x = 0;x<banyakIndividuElitism; x++){					//
+						var tempFitness = [];										//
+						for(var y = 0; y<2; y++){									//
+							if(y==0){												//
+								tempFitness.push(x);								// LOOPING INI FUNGSINYA HANYA MENAMBAHKAN NOMOR INDEX
+							}else{													// DI ARRAY FITNESS GABUNGAN (arrGabunganFitnessElitism)
+								tempFitness.push(arrGabunganFitnessElitism[x])		//
+							}														//
+						}															//
+						fitnessBernomor.push(tempFitness);							//
+					}																//
+
+					console.log("---------Gabungan Fitness Bernomor-----------");
+					console.log(fitnessBernomor);
+					fitnessBernomor.sort(function(a,b){	//INI dilakukan SORTING berdasarkan fitness (KOLOM KEDUA)
+						return b[1] - a[1];
+					})
+					console.log("---------Gabungan Fitness Bernomor Sorted---------");
+					console.log(fitnessBernomor);
+
+					//Populasi Terpilih
+					var arrPopulasiBaru = [];	//Variabel yang berisi populasi baru, bentuknya seperti baris #180, jumlahnya individunya adalah sebanyak individu awal.
+					for(var x = 0; x<jmlIndividu; x++){
+						arrPopulasiBaru.push(individuElitsm[fitnessBernomor[x][0]]);  //push data dari array gabungan sebanyak individu awal
+					}																  //dengan indeks berdasarkan array yang sudah di sorting di
+																					  //baris #433
+					console.log("-----------POPULASI BARU-------------------");
+					console.log(arrPopulasiBaru);
+
+					arrPopulasi = [] //Flush data populasi lama
+					arrPopulasi = arrPopulasiBaru.slice() //Copykan data populasi baru ke yang lama
+
+					console.log("variabel arrPopulasi : ");
+					console.log(arrPopulasi);
+
+					for(var w=0; w<jmlKromosom; w++){	//Ini fungsi untuk mengupdate data pada chart
+						var tempPoint = [];
+						for(var x =0; x < 3; x++){
+							if(x==0){
+								tempPoint.push(arrPopulasi[0][w][0]);
+							}else if(x==1){
+								tempPoint.push(arrPopulasi[0][w][1])
+							}
+							else{
+								tempPoint.push('point { shape-type: star; fill-color: #a52714; }');
+							}
+						}
+						datasetPure[74+w] = tempPoint;
+					}
+
+					console.log("Updated Data Berubah : ");
+					console.log(datasetPure);
+
+					data = new google.visualization.DataTable();
+					data.addColumn('number', 'X-axis');
+					data.addColumn('number', 'Y-axis');
+					data.addColumn({'type': 'string','role': 'style'});
+					data.addRows(datasetPure);
+
+
+					chart.draw(data, options); //sama kan
+
+					counter++;
+					if(counter == jmlGenerasi){
+						clearInterval(interval);
+					}
+				}, 20);
+
+			}
+
+			function mutasi(arrayDimutasi){ //fungsi untuk mutasi
+				var tempArrayMutasi = [];
+				var nilaiGeser = randomNumberFloat(-2,2); //merupakan nilai geser
+				var randomIndex = randomNumber(0,arrayDimutasi.length-1);
+				arrayDimutasi[randomIndex] = arrayDimutasi[randomIndex] + nilaiGeser;
+
+				console.log("Index dimutasi : ");
+				console.log(randomIndex);
+				console.log(nilaiGeser);
+
+				return arrayDimutasi;
+			}
+
+			function crossover(induk1, induk2, indexAwal, indexAkhir){ //fungsi crossovernya, paramaternya diperhatikan, dipanggil di baris #314
+				var tempArray1 = [];
+				var tempArray2 = [];
+				var tempArraySeluruh = [];
+
+				console.log("Induk 1 Sebelum swap : " + induk1);
+				console.log("Induk 2 Sebelum swap : " + induk2);
+
+				console.log("indexAwal Swap : " + indexAwal);
+				console.log("indexAkhir Swap : " + indexAkhir);
+
+				for(i=0; i< induk1.length; i++){
+					if(i<indexAwal){
+						tempArray1.push(induk1[i]);
+						tempArray2.push(induk2[i]);
+					}else if(i >= indexAwal && i <= indexAkhir){
+						tempArray1.push(induk2[i]);
+						tempArray2.push(induk1[i]);
+					}else if(i > indexAkhir){
+						tempArray1.push(induk1[i]);
+						tempArray2.push(induk2[i]);
+					}
+				}
+
+				console.log("Induk 1 Sesudah swap : " + tempArray1);
+				console.log("Induk 2 Sesudah swap : " + tempArray2);
+
+				tempArraySeluruh.push(tempArray1);
+				tempArraySeluruh.push(tempArray2);
+				return tempArraySeluruh;
+			}
+
+			function jarakTerdekat(dataset, individu){ //mencari jarak terdekat
+				var arrTempJarak = [];
+
+				for(i = 0; i < individu.length; i++){ //dicari per kromosom
+					arrTempJarak.push(jarakTitik(individu[i],dataset));
+				}
+				arrTempJarak.sort(function(x,y){
+					return x-y;
+				});
+
+				// console.log("Jarak kromosom terdekat : ");
+				// console.log(individu.length);
+				// console.log(arrTempJarak);
+
+				return arrTempJarak[0];
+			}
+
+			function jarakTitik(a,b){
+				// console.log("");
+				// console.log("data A : ");
+				// console.log(a[0]);
+				// console.log("data B : ");
+				// console.log(b[0]);
+
+				var tempJarak = Math.sqrt(Math.pow((a[0] - b[0]),2) + Math.pow((a[1] - b[1]),2));
+
+				// console.log("( "+a[0] + " - " + b[0] +" )^2 + ( "+a[1]+" - " +b[1] + " )^2");
+				// console.log(tempJarak);
+				return tempJarak;
+			}
+
+			function randomNumber(min,max){ //fungsi random
+				return Math.floor(Math.random()*(max-min+1)+min);
+			}
+
+			function randomNumberFloat(min,max){ //fungsi random float untuk mutasinya
+				return Math.random()*(max-min+1)+min;
+			}
+		});
+
+
+	</script>
+</body>
+</html>
